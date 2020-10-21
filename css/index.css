@@ -1,0 +1,21 @@
+.search {
+    margin: 0 auto 2rem auto
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+    gap: 1rem;
+}
+
+.gallery img {
+    transition: 200ms;
+    border-radius: 0.5rem;
+
+}
+
+.gallery img:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+    box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.75);
+}

@@ -1,0 +1,15 @@
+.editor-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.canvas-container {
+    width: fit-content;
+    height: fit-content;
+    border: 2px solid white;
+}
+
+.controls {
+    width: 300px;
+    border: 2px solid white;
+}

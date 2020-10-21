@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MadhiMEME</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/meme-editor.css">
+</head>
+
+<body onload="initEditor()">
+
+    <header>
+
+        <div class="header-container container">
+
+            <a class="main-logo" href="#">MadhiMEME!</a>
+
+            <nav class="main-nav">
+                <a href="#">Gallery</a>
+                <a href="#">Memes</a>
+                <a href="#">About</a>
+            </nav>
+
+            <!-- <svg class="hamburger" onclick="toggleScreen('menu')" enable-background="new 0 0 122.879 103.609"
+                version="1.1" viewBox="0 0 122.88 103.61" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="m10.368 0h102.14c5.703 0 10.367 4.665 10.367 10.367s-4.664 10.368-10.367 10.368h-102.14c-5.702 0-10.368-4.665-10.368-10.367 0-5.703 4.666-10.368 10.368-10.368zm0 82.875h102.14c5.703 0 10.367 4.665 10.367 10.367s-4.664 10.367-10.367 10.367h-102.14c-5.702 0-10.368-4.665-10.368-10.367s4.666-10.367 10.368-10.367zm0-41.437h102.14c5.703 0 10.367 4.665 10.367 10.367s-4.664 10.368-10.367 10.368h-102.14c-5.702 0-10.368-4.666-10.368-10.368s4.666-10.367 10.368-10.367z"
+                    clip-rule="evenodd" fill-rule="evenodd" />
+                </svg> -->
+
+        </div>
+    </header>
+
+    <main class="editor-container container">
+
+        <div class="canvas-container">
+            <canvas id="main-canvas" height="500" width="500"></canvas>
+        </div>
+
+        <div class="controls">
+            <div class="text-container">
+                <input class="text-input" name="text-1" type="text" placeholder="Text">
+                <br>
+                <div class="text-style">
+                    <button class="add-line" onclick="onAddLine()">Add Line</button>
+                    <button class="cycle-lines" onclick="onCycleLines()">Cycle Lines</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="js/service/util-service.js"></script>
+    <script src="js/service/storage-service.js"></script>
+    <script src="js/service/meme-service.js"></script>
+    <script src="js/meme-controller.js"></script>
+</body>
+
+</html>
