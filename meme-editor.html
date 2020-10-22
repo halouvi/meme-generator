@@ -15,10 +15,10 @@
 
         <div class="header-container container">
 
-            <a class="main-logo" href="#">MadhiMEME!</a>
+            <a class="main-logo" href="index.html">MadhiMEME!</a>
 
             <nav class="main-nav">
-                <a href="#">Gallery</a>
+                <a href="index.html">Gallery</a>
                 <a href="#">Memes</a>
                 <a href="#">About</a>
             </nav>
@@ -41,11 +41,26 @@
 
         <div class="controls">
             <div class="text-container">
-                <input class="text-input" name="text-1" type="text" placeholder="Text">
+                <input class="text-input" type="text" placeholder="Text">
                 <br>
                 <div class="text-style">
                     <button class="add-line" onclick="onAddLine()">Add Line</button>
+                    <button class="delete-line" onclick="onDeleteLine()">Delete Line</button>
                     <button class="cycle-lines" onclick="onCycleLines()">Cycle Lines</button>
+                    <button class="line-up" value="up" onclick="onLineMove(value)">Move Up</button>
+                    <button class="line-down" value="down" onclick="onLineMove(value)">Move Down</button>
+                    <select class="font-size" name="font-size" id="font-size" onchange="onFontSizeUpdate(event)">
+                        <option>30</option>
+                        <option>38</option>
+                        <option>48</option>
+                        <option>64</option>
+                    </select>
+                    <select class="font-family" name="font-family" id="font-family" onchange="onFontFamilyUpdate(event)">
+                        <option>Impact</option>
+                        <option>Arial</option>
+                    </select>
+                    <input class="font-color" type="color" value="#ffffff">
+                    <button class="text-align" value="center" onclick="onTextAlignUpdate(event)">center</button>
                 </div>
             </div>
         </div>
