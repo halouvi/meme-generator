@@ -1,4 +1,4 @@
-// 'use strict';
+'use strict';
 
 const imgSquareURL = 'img/meme-square/'
 const STORAGE_KEY = 'memeDB'
@@ -79,43 +79,74 @@ var gImgs = [
 ];
 var gMeme = {
     selectedImgId: 0,
+    selectedImgURL: '',
     selectedLineIdx: 0,
     lines: []
 }
 var gCanvas;
 var gCtx;
 
-addEventListener('input', updateText);
-
-
-
 function cycleLines() {
-    if (gMeme.selectedLineIdx >= gMeme.lines.length -1) gMeme.selectedLineIdx = 0;
+    if (gMeme.selectedLineIdx >= gMeme.lines.length - 1) gMeme.selectedLineIdx = 0;
     else gMeme.selectedLineIdx += 1;
-    document.querySelector('.text-input').value = gMeme.lines[gMeme.selectedLineIdx].txt;
+    return gMeme.lines[gMeme.selectedLineIdx]
 }
+
+function deleteLine() {
+    gMeme.lines.splice(gMeme.selectedLineIdx, 1)
+}
+
 function updateSelectedLineIdx() {
     var elTextInput = document.querySelector('.text-input').value;
     if (!elTextInput) return;
-    gMeme.selectedLineIdx += 1;
+    gMeme.selectedLineIdx = gMeme.lines.length;
 
 }
 
-function updateText(ev) {
-    var txt = ev.target.value;
-    if (!txt) gMeme.lines.splice(gMeme.selectedLineIdx, 1);
-    else gMeme.lines[gMeme.selectedLineIdx] = { txt };
-    renderCanvas();
+function doUpdateText(ev) {
+    var currLine = gMeme.lines[gMeme.selectedLineIdx];
+    if (!currLine) currLine = createNewLine(ev.target.value);
+    else currLine.txt = ev.target.value;
+
+    // if (currLine.align === 'center') alignCenter(currLine)
+    // else if (currLine.align === 'right') alignRight(currLine)
+    // else if (currLine.align === 'left') currLine.posX = 25
+
+}
+
+function createNewLine(txt) {
+    var posY;
+    var fontSize = +document.querySelector('.font-size').value;
+    if (!gMeme.lines.length) posY = fontSize;
+    else if (gMeme.lines.length === 1) posY = gCanvas.height - (fontSize / 2.5);
+    else posY = (gCanvas.height / 2);
+    var newLine = {
+        txt,
+        textAlign: document.querySelector('.text-align').value,
+        fontSize,
+        fontFamily: document.querySelector('.font-family').value,
+        fontColor: document.querySelector('.font-color').value,
+        posX: gCanvas.width / 2,
+        posY,
+    }
+    gMeme.lines.push(newLine);
+    return newLine;
+}
+
+function doUpdateColor(ev) {
+    if (!gMeme.lines.length) return
+    gMeme.lines[gMeme.selectedLineIdx].fontColor = ev.target.value;
 }
 
 function getImgs() {
     return gImgs;
 }
 
-function memeSelect(id) {
-    gMeme.selectedImgId = id;
+function doMemeSelect(id) {
+    let img = getImgById(id)
+    gMeme.selectedImgId = img.id;
+    gMeme.selectedImgURL = img.url
     saveToStorage(STORAGE_KEY, gMeme)
-    loadEditor();
 }
 
 function loadEditor() {
@@ -126,32 +157,41 @@ function initModel() {
     gCanvas = document.querySelector('#main-canvas');
     gCtx = gCanvas.getContext('2d');
     gMeme = loadFromStorage(STORAGE_KEY)
-    renderCanvas();
 }
 
-
-function drawImg(meme) {
-    var memeToDraw = new Image();
-    memeToDraw.onload = function () {
-        gCtx.drawImage(memeToDraw, 0, 0, gCanvas.width, gCanvas.height)
-    };
-    memeToDraw.src = meme.url;
+function doLineMove(where) {
+    let line = gMeme.lines[gMeme.selectedLineIdx];
+    let distance = line.fontSize;
+    if (where === 'up' && line.posY > distance) line.posY -= distance;
+    else if (where === 'down' && line.posY < gCanvas.height - distance) line.posY += distance;
 }
 
-function drawText(lines, x = 120, y = 100) {
-    lines.forEach(line => {
-        gCtx.font = '48px Impact';
-        gCtx.fillStyle = 'white'
-        gCtx.lineWidth = '2';
-        gCtx.textAlign = 'start';
-        gCtx.fillText(line.txt, x, y);
-        gCtx.strokeText(line.txt, x, y);
-        y += 50;
-    });
+function doFontSizeUpdate(ev) {
+    if (!gMeme.lines.length) return;
+    gMeme.lines[gMeme.selectedLineIdx].fontSize = +ev.target.value;
 }
 
-function getMemeById(id) {
+function doFontFamilyUpdate(ev) {
+    gMeme.lines[gMeme.selectedLineIdx].fontFamily = ev.target.value;
+
+}
+
+function doTextAlignUpdate(ev) {
+    let nextValue;
+    var currLine = gMeme.lines[gMeme.selectedLineIdx];
+    if (ev.target.value === 'center') nextValue = 'start';
+    else if (ev.target.value === 'start') nextValue = 'end';
+    else if (ev.target.value === 'end') nextValue = 'center';
+    currLine.textAlign = nextValue;
+    return currLine;
+}
+
+function getImgById(id) {
     return gImgs.find((img) => {
         return img.id === id;
     })
+}
+
+function getMeme() {
+    return gMeme
 }
