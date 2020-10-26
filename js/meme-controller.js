@@ -1,13 +1,11 @@
 'use strict';
 
-function initGallery() {
-    renderGallery();
-}
 
-function renderGallery() {
-    getImgs().forEach((img) => {
-        document.querySelector('.gallery').innerHTML += `<img src="${img.url}" onclick=(onMemeSelect(${img.id}))>`;
-    })
+function initEditor() {
+    initModel()
+    document.querySelector('.text-input').addEventListener('input', onUpdateText);
+    document.querySelector('.font-color').addEventListener('input', onFontColorUpdate);
+    renderCanvas();
 }
 
 function renderCanvas() {
@@ -22,7 +20,7 @@ function renderCanvas() {
             gCtx.lineWidth = '2';
             gCtx.textAlign = line.textAlign;
             let posX;
-            if (gCtx.textAlign === 'center') posX = gCanvas.width/2
+            if (gCtx.textAlign === 'center') posX = gCanvas.width / 2
             if (gCtx.textAlign === 'end') posX = gCanvas.width
             if (gCtx.textAlign === 'start') posX = 0
             gCtx.fillText(line.txt, posX, line.posY);
@@ -32,26 +30,16 @@ function renderCanvas() {
 }
 
 function renderControls(currLine) {
-    if (currLine){
+    if (!currLine) {
+        document.querySelector('.text-input').value = null
+    } else {
         document.querySelector('.text-input').value = currLine.txt;
-        document.querySelector('.font-size').value = currLine.fontSize;
         document.querySelector('.font-color').value = currLine.fontColor;
         document.querySelector('.font-family').value = currLine.fontFamily;
+        document.querySelector('.font-family').style.fontFamily = currLine.fontFamily;
         document.querySelector('.text-align').value = currLine.textAlign;
-        document.querySelector('.text-align').innerText = currLine.textAlign;
-    } else document.querySelector('.text-input').value = null;
-}
-
-function onMemeSelect(id) {
-    doMemeSelect(id);
-    loadEditor();
-}
-
-function initEditor() {
-    initModel()
-    document.querySelector('.text-input').addEventListener('input', onUpdateText);
-    document.querySelector('.font-color').addEventListener('input',onFontColorUpdate);
-    renderCanvas();
+        document.querySelector('.text-align img').src = `img/icons/align-${currLine.textAlign}.png`
+    }
 }
 
 function onUpdateText(ev) {
@@ -60,13 +48,13 @@ function onUpdateText(ev) {
 }
 
 function onFontColorUpdate(ev) {
-    doUpdateColor(ev);
+    doFontColorUpdate(ev);
     renderCanvas()
 }
 
 function onAddLine() {
-    updateSelectedLineIdx()
-    document.querySelector('.text-input').value = '';
+    const elTxtInput = document.querySelector('.text-input');
+    if (doAddline(elTxtInput)) elTxtInput.value = '';
 }
 
 function onDeleteLine() {
@@ -76,25 +64,25 @@ function onDeleteLine() {
 }
 
 function onCycleLines() {
-    renderControls(cycleLines())
+    renderControls(doCycleLines())
 }
 
-function onLineMove(where) {
-    doLineMove(where);
+function onLineMove(value) {
+    doLineMove(value);
     renderCanvas();
 }
 
-function onFontSizeUpdate(ev) {
-    doFontSizeUpdate(ev);
+function onFontSizeUpdate(value) {
+    doFontSizeUpdate(value);
     renderCanvas();
 }
 
-function onFontFamilyUpdate(ev) {
-    doFontFamilyUpdate(ev);
+function onFontFamilyUpdate(value) {
+    renderControls(doFontFamilyUpdate(value));
     renderCanvas();
 }
 
-function onTextAlignUpdate(ev) {
-    renderControls(doTextAlignUpdate(ev));
+function onTextAlignUpdate(value) {
+    renderControls(doTextAlignUpdate(value));
     renderCanvas()
 }

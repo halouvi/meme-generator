@@ -1,8 +1,18 @@
+.search-container {
+    margin-block-end: 6rem;
+}
+
 .search {
-    margin: 0 auto 2rem auto
+    max-width: 100%;
+}
+
+.gallery-container {
+    margin: 0 0 1rem 0;
 }
 
 .gallery {
+    margin: 1rem 0;
+    max-width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
     gap: 1rem;
@@ -10,13 +20,13 @@
 
 .gallery img {
     transition: 200ms;
-    border-radius: 0.5rem;
+    border-radius: 0.3rem;
 
 }
 
 .gallery img:hover {
     cursor: pointer;
-    transform: scale(1.1);
-    box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.75);
+    transform: scale(1.05);
+    box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.5);
 }
 

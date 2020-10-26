@@ -1,8 +1,10 @@
 'use strict';
 
 const imgSquareURL = 'img/meme-square/'
-const STORAGE_KEY = 'memeDB'
 
+
+var gCanvas;
+var gCtx;
 var gImgs = [
     {
         id: 1,
@@ -81,76 +83,17 @@ var gMeme = {
     selectedImgId: 0,
     selectedImgURL: '',
     selectedLineIdx: 0,
-    lines: []
-}
-var gCanvas;
-var gCtx;
-
-function cycleLines() {
-    if (gMeme.selectedLineIdx >= gMeme.lines.length - 1) gMeme.selectedLineIdx = 0;
-    else gMeme.selectedLineIdx += 1;
-    return gMeme.lines[gMeme.selectedLineIdx]
-}
-
-function deleteLine() {
-    gMeme.lines.splice(gMeme.selectedLineIdx, 1)
-}
-
-function updateSelectedLineIdx() {
-    var elTextInput = document.querySelector('.text-input').value;
-    if (!elTextInput) return;
-    gMeme.selectedLineIdx = gMeme.lines.length;
-
-}
-
-function doUpdateText(ev) {
-    var currLine = gMeme.lines[gMeme.selectedLineIdx];
-    if (!currLine) currLine = createNewLine(ev.target.value);
-    else currLine.txt = ev.target.value;
-
-    // if (currLine.align === 'center') alignCenter(currLine)
-    // else if (currLine.align === 'right') alignRight(currLine)
-    // else if (currLine.align === 'left') currLine.posX = 25
-
-}
-
-function createNewLine(txt) {
-    var posY;
-    var fontSize = +document.querySelector('.font-size').value;
-    if (!gMeme.lines.length) posY = fontSize;
-    else if (gMeme.lines.length === 1) posY = gCanvas.height - (fontSize / 2.5);
-    else posY = (gCanvas.height / 2);
-    var newLine = {
-        txt,
-        textAlign: document.querySelector('.text-align').value,
-        fontSize,
-        fontFamily: document.querySelector('.font-family').value,
-        fontColor: document.querySelector('.font-color').value,
-        posX: gCanvas.width / 2,
-        posY,
-    }
-    gMeme.lines.push(newLine);
-    return newLine;
-}
-
-function doUpdateColor(ev) {
-    if (!gMeme.lines.length) return
-    gMeme.lines[gMeme.selectedLineIdx].fontColor = ev.target.value;
-}
-
-function getImgs() {
-    return gImgs;
-}
-
-function doMemeSelect(id) {
-    let img = getImgById(id)
-    gMeme.selectedImgId = img.id;
-    gMeme.selectedImgURL = img.url
-    saveToStorage(STORAGE_KEY, gMeme)
-}
-
-function loadEditor() {
-    window.location.href = `meme-editor.html`;
+    lines: [
+        {
+            txt: "",
+            textAlign: "center",
+            fontFamily: "Impact",
+            fontColor: "#ffffff",
+            fontSize: 36,
+            posX: 250,
+            posY: 36
+        }
+    ]
 }
 
 function initModel() {
@@ -159,37 +102,109 @@ function initModel() {
     gMeme = loadFromStorage(STORAGE_KEY)
 }
 
-function doLineMove(where) {
-    let line = gMeme.lines[gMeme.selectedLineIdx];
-    let distance = line.fontSize;
-    if (where === 'up' && line.posY > distance) line.posY -= distance;
-    else if (where === 'down' && line.posY < gCanvas.height - distance) line.posY += distance;
-}
-
-function doFontSizeUpdate(ev) {
-    if (!gMeme.lines.length) return;
-    gMeme.lines[gMeme.selectedLineIdx].fontSize = +ev.target.value;
-}
-
-function doFontFamilyUpdate(ev) {
-    gMeme.lines[gMeme.selectedLineIdx].fontFamily = ev.target.value;
-
-}
-
-function doTextAlignUpdate(ev) {
-    let nextValue;
-    var currLine = gMeme.lines[gMeme.selectedLineIdx];
-    if (ev.target.value === 'center') nextValue = 'start';
-    else if (ev.target.value === 'start') nextValue = 'end';
-    else if (ev.target.value === 'end') nextValue = 'center';
-    currLine.textAlign = nextValue;
+function doUpdateText(ev) {
+    let currLine = gMeme.lines[gMeme.selectedLineIdx];
+    if (!currLine) currLine = createNewLine(ev.target.value);
+    else currLine.txt = ev.target.value;
     return currLine;
 }
 
-function getImgById(id) {
-    return gImgs.find((img) => {
-        return img.id === id;
-    })
+function createNewLine(txt) {
+    let posY;
+    const fontSize = 36;
+    if (!gMeme.lines.length) posY = fontSize;
+    else if (gMeme.lines.length === 1) posY = gCanvas.height - (fontSize / 2.5);
+    else posY = (gCanvas.height / 2);
+    const newLine = {
+        txt,
+        textAlign: document.querySelector('.text-align').value,
+        fontFamily: document.querySelector('.font-family').value,
+        fontColor: document.querySelector('.font-color').value,
+        fontSize,
+        posX: gCanvas.width / 2,
+        posY,
+    }
+    gMeme.lines.push(newLine);
+    return newLine;
+}
+
+function doCycleLines() {
+    if (gMeme.selectedLineIdx >= gMeme.lines.length - 1) gMeme.selectedLineIdx = 0;
+    else gMeme.selectedLineIdx += 1;
+    let currLine = gMeme.lines[gMeme.selectedLineIdx];
+    return currLine;
+}
+
+function doAddline(elTxtInput) {
+    if (!elTxtInput.value) return false;
+    gMeme.selectedLineIdx = gMeme.lines.length;
+    return true
+}
+
+function doDeleteLine() {
+    gMeme.lines.splice(gMeme.selectedLineIdx, 1)
+    if (!gMeme.lines.length) gMeme.lines.push(
+        {
+            fontColor: "#ffffff",
+            fontFamily: "Impact",
+            fontSize: 36,
+            posX: 250,
+            posY: 36,
+            textAlign: "center",
+            txt: ""
+        }
+    )
+}
+
+function doTextAlignUpdate(currAlign) {
+    let nextAlign = '';
+    if (currAlign === 'center') nextAlign = 'start'
+    else if (currAlign === 'start') nextAlign = 'end';
+    else if (currAlign === 'end') nextAlign = 'center';
+    let currLine = gMeme.lines[gMeme.selectedLineIdx];
+    if (!currLine) currLine = { textAlign: nextAlign };
+    else currLine.textAlign = nextAlign;
+    return currLine;
+}
+
+function doLineMove(where) {
+    const currLine = gMeme.lines[gMeme.selectedLineIdx];
+    if (!currLine) return
+    const distance = currLine.fontSize;
+    if (where === 'up' && currLine.posY > distance) currLine.posY -= distance;
+    else if (where === 'down' && currLine.posY < gCanvas.height - distance) currLine.posY += distance;
+    return currLine;
+}
+
+function doFontFamilyUpdate(currFont) {
+    const fonts = ['Impact', 'Arial', 'Montserrat-Bold', 'Montserrat-Regular']
+    const nextFontIdx = fonts.indexOf(currFont) + 1;
+    let nextFont = nextFontIdx < fonts.length ? fonts[nextFontIdx] : fonts[0];
+    let currLine = gMeme.lines[gMeme.selectedLineIdx];
+    if (!currLine) {
+        currLine = { fontFamily: nextFont };
+    } else {
+        currLine.fontFamily = nextFont;
+    }
+    return currLine;
+}
+
+function doFontSizeUpdate(direction) {
+    const currLine = gMeme.lines[gMeme.selectedLineIdx];
+    if (!currLine) return;
+    direction === 'up' ? currLine.fontSize *= 1.2 : currLine.fontSize /= 1.2;
+    return currLine;
+}
+
+function doFontColorUpdate(ev) {
+    const currLine = gMeme.lines[gMeme.selectedLineIdx]
+    if (!currLine) return;
+    currLine.fontColor = ev.target.value;
+    return currLine;
+}
+
+function getImgs() {
+    return gImgs;
 }
 
 function getMeme() {

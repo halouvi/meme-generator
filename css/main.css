@@ -2,17 +2,33 @@
     box-sizing: border-box;
 }
 
+/* FontFace */
+
+@font-face {
+    font-family: Montserrat-Bold;
+    src: url(/font/Montserrat-Bold.ttf);
+}
+
+@font-face {
+    font-family: Montserrat-Regular;
+    src: url(/font/Montserrat-Regular.ttf);
+}
+
+@font-face {
+    font-family: Montserrat-Medium;
+    src: url(/font/Montserrat-Medium.ttf);
+}
+
 /* BASIC */
 
 html {
     font-size: 16px;
-    color: #fff;
 }
 
 body {
-    margin: 0;
-    position: relative;
-    background-color: rgb(50, 51, 58);
+    font-family: Montserrat-Regular;
+    color: #ffffff;
+    margin: 0 auto;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -34,25 +50,71 @@ img {
 /* Layout */
 
 .container {
-    margin-inline-start: auto;
-    margin-inline-end: auto;
+    width: 60rem;
+}
+
+main {
+    background-color: #e3e3e3;
+}
+
+/* Helpers */
+
+/* flex helpers */
+
+.flex {
+    display: flex;
+}
+
+.flex.wrap {
+    flex-wrap: wrap;
+}
+
+.flex.column {
+    flex-direction: column;
+}
+
+.flex.space-between {
+    justify-content: space-between;
+}
+
+.flex.space-around {
+    justify-content: space-around;
+}
+
+.flex.align-center {
+    align-items: center;
+}
+
+.flex.justify-center {
+    justify-content: center;
 }
 
 /* Elements */
 
-header {
+.header-container {
     height: 5rem;
-    background-color: #000;
-    margin-block-end: 25px;
+    background-color: #ff7f00;
 }
 
-.header-container {
-    font-size: 1.5rem;
-    margin: auto;
+.main-header {
     height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    max-width: 100%;
+    font-size: 1.1875rem;
+}
+
+.footer-container {
+    height: 5rem;
+    background-color: #ff7f00;
+}
+
+.main-footer {
+    height: 100%;
+    max-width: 100%;
+    font-size: 1.1875rem;
+}
+
+.main-logo {
+    width: 6rem;
 }
 
 .main-nav {
@@ -61,10 +123,14 @@ header {
     justify-content: space-between;
 }
 
-@media (min-width: 1000px) {
-    
+@media (max-width: 770px) {
+    .container {
+        width: 750px;
+    }
+}
+
+@media (max-width: 1000px) {
     .container {
         width: 960px;
     }
-
 }
